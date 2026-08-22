@@ -1,0 +1,51 @@
+{% extends "detector/base.html" %}
+{% block content %}
+<section class="text-center mb-10">
+  <p class="font-mono text-xs uppercase tracking-widest text-faro/80 mb-4">{{ total_apps }} apps analizadas</p>
+  <h1 class="font-display text-4xl sm:text-5xl font-semibold leading-tight mb-4">
+    ¿Es apta esta app<br class="hidden sm:block"> para tu hijo o hija?
+  </h1>
+  <p class="text-crema/60 max-w-lg mx-auto">
+    Buscá el nombre de una app, web o red social y te mostramos la edad recomendada,
+    el nivel de riesgo y por qué.
+  </p>
+</section>
+
+<section class="relative">
+  <input
+    type="text"
+    name="q"
+    placeholder="Ej: Roblox, TikTok, Discord…"
+    autocomplete="off"
+    class="w-full bg-nochesoft border border-white/10 rounded-2xl px-6 py-4 text-lg font-body text-crema placeholder:text-crema/30 focus:outline-none focus:border-faro/60 transition-colors"
+    hx-get="{% url 'detector:buscar' %}"
+    hx-trigger="keyup changed delay:350ms, search"
+    hx-target="#resultados"
+    hx-indicator="#spinner"
+  >
+  <div id="spinner" class="htmx-indicator absolute right-5 top-1/2 -translate-y-1/2">
+    <div class="w-5 h-5 border-2 border-faro/30 border-t-faro rounded-full animate-spin"></div>
+  </div>
+</section>
+
+<section id="resultados" class="mt-6"></section>
+
+{% if mas_buscadas %}
+<section class="mt-16">
+  <p class="font-mono text-xs uppercase tracking-widest text-crema/40 mb-4">Más buscadas</p>
+  <div class="flex flex-wrap gap-2">
+    {% for item in mas_buscadas %}
+    <a href="{% url 'detector:detalle' item.app_encontrada__slug %}"
+       class="px-4 py-2 bg-nochesoft border border-white/10 rounded-full text-sm hover:border-faro/50 transition-colors">
+      {{ item.app_encontrada__logo_emoji }} {{ item.app_encontrada__nombre }}
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<style>
+  .htmx-indicator { opacity: 0; transition: opacity 150ms; }
+  .htmx-request .htmx-indicator, .htmx-request.htmx-indicator { opacity: 1; }
+</style>
+{% endblock %}

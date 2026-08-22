@@ -1,0 +1,18 @@
+{% comment %}
+Uso: {% include "detector/_dial.html" with edad=app.edad_recomendada angulo=app.angulo_dial color=app.color_riesgo size="lg" %}
+{% endcomment %}
+<div class="relative {% if size == 'lg' %}w-40 h-20{% else %}w-24 h-12{% endif %} overflow-hidden shrink-0">
+  <div class="absolute top-0 left-0 {% if size == 'lg' %}w-40 h-40{% else %}w-24 h-24{% endif %} rounded-full"
+       style="background: conic-gradient(from 270deg, #4ECDC4 0deg, {{ color }} {{ angulo|add:90 }}deg, #2A3050 {{ angulo|add:90 }}deg, #2A3050 360deg);">
+  </div>
+  <div class="absolute top-1 left-1 {% if size == 'lg' %}w-38 h-38{% else %}w-22 h-22{% endif %} rounded-full bg-noche"
+       style="{% if size == 'lg' %}width:9.5rem;height:9.5rem;top:0.25rem;left:0.25rem;{% else %}width:5.5rem;height:5.5rem;top:0.25rem;left:0.25rem;{% endif %}">
+  </div>
+  <div class="absolute bottom-0 left-1/2 {% if size == 'lg' %}w-1 h-16{% else %}w-0.5 h-10{% endif %} bg-crema rounded-full"
+       style="transform-origin: bottom center; transform: translateX(-50%) rotate({{ angulo }}deg);">
+  </div>
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-crema"></div>
+  <div class="absolute inset-x-0 {% if size == 'lg' %}bottom-1{% else %}bottom-0{% endif %} text-center">
+    <span class="font-mono {% if size == 'lg' %}text-lg{% else %}text-sm{% endif %} font-semibold" style="color:{{ color }}">{{ edad }}+</span>
+  </div>
+</div>

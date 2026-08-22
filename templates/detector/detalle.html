@@ -1,0 +1,56 @@
+{% extends "detector/base.html" %}
+{% block title %}{{ app.nombre }} — Faro{% endblock %}
+{% block content %}
+<a href="{% url 'detector:home' %}" class="text-sm text-crema/40 hover:text-faro font-mono">&larr; Volver a buscar</a>
+
+<div class="mt-8 bg-nochesoft border border-white/10 rounded-3xl p-8">
+  <div class="flex items-start gap-6 flex-wrap">
+    {% include "detector/_dial.html" with edad=app.edad_recomendada angulo=app.angulo_dial color=app.color_riesgo size="lg" %}
+    <div class="flex-1 min-w-[200px]">
+      <span class="text-4xl">{{ app.logo_emoji|default:"📱" }}</span>
+      <h1 class="font-display text-3xl font-semibold mt-2">{{ app.nombre }}</h1>
+      <p class="text-crema/60 mt-1">{{ app.descripcion_corta }}</p>
+      <div class="flex items-center gap-3 mt-3">
+        <span class="text-xs font-mono uppercase tracking-wide px-3 py-1 rounded-full" style="background:{{ app.color_riesgo }}22; color:{{ app.color_riesgo }}">
+          {{ app.mensaje_riesgo }}
+        </span>
+        {% if app.fuente_detalle %}
+        <span class="text-xs text-crema/30 font-mono">Fuente: {{ app.fuente_detalle }}</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 pt-8 border-t border-white/10">
+    <p class="font-mono text-xs uppercase tracking-widest text-crema/40 mb-3">Por qué</p>
+    <p class="text-crema/80 leading-relaxed">{{ app.justificacion }}</p>
+  </div>
+
+  {% if app.factores.all %}
+  <div class="mt-8 pt-8 border-t border-white/10">
+    <p class="font-mono text-xs uppercase tracking-widest text-crema/40 mb-4">Factores de riesgo</p>
+    <div class="grid sm:grid-cols-2 gap-3">
+      {% for factor in app.factores.all %}
+      <div class="bg-noche border border-white/10 rounded-xl p-4">
+        <p class="text-sm font-medium text-crema">{{ factor.nombre }}</p>
+        <p class="text-xs text-crema/40 mt-1">{{ factor.descripcion }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% if relacionadas %}
+<div class="mt-8">
+  <p class="font-mono text-xs uppercase tracking-widest text-crema/40 mb-4">Apps similares</p>
+  <div class="flex flex-wrap gap-2">
+    {% for r in relacionadas %}
+    <a href="{% url 'detector:detalle' r.slug %}" class="px-4 py-2 bg-nochesoft border border-white/10 rounded-full text-sm hover:border-faro/50 transition-colors">
+      {{ r.logo_emoji }} {{ r.nombre }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

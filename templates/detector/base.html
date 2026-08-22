@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Faro — Seguridad digital para chicos{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'detector/css/tailwind.css' %}">
+<script src="{% static 'detector/js/htmx.min.js' %}"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body { background-color: #12182B; font-family: 'Space Grotesk', system-ui, sans-serif; }
+  .font-display { font-family: 'Fraunces', serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  .beam {
+    background-image: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,184,77,0.15), transparent 70%);
+  }
+</style>
+</head>
+<body class="bg-noche text-crema font-body min-h-screen beam">
+<header class="border-b border-white/10">
+  <div class="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between">
+    <a href="{% url 'detector:home' %}" class="font-display text-2xl font-semibold tracking-tight text-crema">
+      Far<span class="text-faro">o</span>
+    </a>
+    <span class="text-xs font-mono text-crema/40">CoderCup T1 · IA para seguridad infantil</span>
+  </div>
+</header>
+<main class="max-w-3xl mx-auto px-6 py-12">
+  {% block content %}{% endblock %}
+</main>
+<footer class="max-w-3xl mx-auto px-6 py-10 text-xs text-crema/30 font-mono">
+  Basado en Common Sense Media, clasificaciones de tienda y el marco de la Convención sobre los Derechos del Niño (art. 75 inc. 22 CN) y la Ley 26.061 / 27.576.
+</footer>
+</body>
+</html>

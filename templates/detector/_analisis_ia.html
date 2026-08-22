@@ -1,0 +1,35 @@
+{% if error %}
+  <div class="bg-alerta/10 border border-alerta/30 rounded-2xl p-6 text-center">
+    <p class="text-alerta">No pudimos completar el análisis por IA en este momento.</p>
+    <p class="text-xs text-crema/40 mt-2 font-mono">{{ error }}</p>
+  </div>
+{% elif no_encontrada %}
+  <div class="bg-nochesoft border border-white/10 rounded-2xl p-6 text-center">
+    <p class="text-crema/60">No pudimos identificar "{{ query }}" como una app o plataforma real.</p>
+  </div>
+{% elif resultado %}
+  <div class="bg-nochesoft border border-faro/30 rounded-2xl p-6">
+    <div class="flex items-center gap-4 mb-4">
+      {% include "detector/_dial.html" with edad=resultado.edad_recomendada angulo=resultado.angulo_dial color=resultado.color_riesgo size="lg" %}
+      <div class="flex-1">
+        <p class="font-display text-xl font-medium">{{ query }}</p>
+        <p class="text-sm mt-1" style="color:{{ resultado.color_riesgo }}">{{ resultado.mensaje_riesgo }}</p>
+        <span class="inline-block mt-1 text-[10px] font-mono uppercase tracking-wide px-2 py-1 bg-faro/20 text-faro rounded-full">
+          Estimado por IA · confianza {{ resultado.confianza|default:"media" }}
+        </span>
+      </div>
+    </div>
+    <p class="text-sm text-crema/70 mb-4">{{ resultado.justificacion }}</p>
+    {% if resultado.factores_riesgo %}
+    <div class="flex flex-wrap gap-2">
+      {% for factor in resultado.factores_riesgo %}
+      <span class="text-xs bg-noche border border-white/10 rounded-full px-3 py-1 text-crema/60">{{ factor }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <p class="text-[11px] text-crema/30 mt-4 font-mono">
+      Este resultado no proviene de nuestra base curada: es una estimación generada por IA
+      y puede contener errores. Verificá con fuentes oficiales antes de decidir.
+    </p>
+  </div>
+{% endif %}
