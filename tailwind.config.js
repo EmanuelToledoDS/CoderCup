@@ -3,9 +3,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        noche: '#12182B',
-        nochesoft: '#1B2340',
-        faro: '#FFB84D',
+        noche: '#0B0F1D',
+        nochesoft: '#131B2E',
+        acento: '#1FB081',
         alerta: '#FF6B5B',
         seguro: '#4ECDC4',
         crema: '#F5F3EE',
@@ -18,9 +18,9 @@ module.exports = {
     },
   },
   safelist: [
-    { pattern: /bg-(noche|nochesoft|faro|alerta|seguro|crema)\/(10|20|30|40|50|60|70|80)/ },
-    { pattern: /text-(noche|nochesoft|faro|alerta|seguro|crema)\/(10|20|30|40|50|60|70|80)/ },
-    { pattern: /border-(noche|nochesoft|faro|alerta|seguro|crema)\/(10|20|30|40|50|60|70|80)/ },
+    { pattern: /bg-(noche|nochesoft|acento|alerta|seguro|crema)\/(10|20|30|40|50|60|70|80)/ },
+    { pattern: /text-(noche|nochesoft|acento|alerta|seguro|crema)\/(10|20|30|40|50|60|70|80)/ },
+    { pattern: /border-(noche|nochesoft|acento|alerta|seguro|crema)\/(10|20|30|40|50|60|70|80)/ },
   ],
   plugins: [],
 }

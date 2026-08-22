@@ -2,9 +2,10 @@ import hashlib
 
 from django.db.models import Count, Q
 from django.shortcuts import render, get_object_or_404
+from django.utils.text import slugify
 from django.views.decorators.http import require_GET
 
-from .models import App, Busqueda
+from .models import App, FactorRiesgo, Busqueda
 from .services import analizar_app_con_ia, AIAnalysisError
 
 
@@ -21,6 +22,49 @@ MENSAJE_RIESGO = {
     "alto": "No recomendada sin supervisión",
     "muy_alto": "No recomendada para menores",
 }
+
+
+def _guardar_app_analizada(nombre_app, resultado):
+    """
+    Guarda el resultado de la IA como registro curado (fuente=IA) para que
+    la próxima búsqueda del mismo nombre lo encuentre directo en la base,
+    sin volver a gastar tokens de IA. Si ya existe un slug igual (carrera
+    o app ya cargada), no pisa el registro existente.
+    """
+    slug = slugify(nombre_app)[:140]
+    if App.objects.filter(slug=slug).exists():
+        return
+
+    edad = min(max(int(resultado.get("edad_recomendada", 13)), 0), 18)
+    nivel = resultado.get("nivel_riesgo") if resultado.get("nivel_riesgo") in dict(
+        App.NivelRiesgo.choices
+    ) else App.NivelRiesgo.MEDIO
+
+    app = App.objects.create(
+        nombre=nombre_app,
+        slug=slug,
+        descripcion_corta=(resultado.get("justificacion", "")[:280]) or "Análisis generado por IA.",
+        edad_recomendada=edad,
+        nivel_riesgo=nivel,
+        justificacion=resultado.get("justificacion", ""),
+        fuente=App.Fuente.IA,
+        fuente_detalle="Estimado automáticamente por IA, no verificado manualmente.",
+        logo_emoji="🤖",
+        activo=True,
+    )
+
+    factores_objs = []
+    for nombre_factor in resultado.get("factores_riesgo", [])[:5]:
+        factor, _ = FactorRiesgo.objects.get_or_create(
+            nombre=nombre_factor[:120],
+            defaults={
+                "descripcion": nombre_factor[:280],
+                "categoria": FactorRiesgo.Categoria.CONTENIDO,
+            },
+        )
+        factores_objs.append(factor)
+    if factores_objs:
+        app.factores.set(factores_objs)
 
 
 def _hash_ip(request):
@@ -65,6 +109,7 @@ def analizar(request):
         return render(request, "detector/_analisis_ia.html", {"error": "Ingresá un nombre."})
 
     Busqueda.objects.create(termino=query, resuelta_por_ia=True, ip_hash=_hash_ip(request))
+
     try:
         resultado = analizar_app_con_ia(query)
     except AIAnalysisError as exc:
@@ -74,6 +119,7 @@ def analizar(request):
         return render(request, "detector/_analisis_ia.html", {"no_encontrada": True, "query": query})
 
     resultado = _enriquecer_resultado_ia(resultado)
+    _guardar_app_analizada(query, resultado)
     return render(request, "detector/_analisis_ia.html", {"resultado": resultado, "query": query})
 
 

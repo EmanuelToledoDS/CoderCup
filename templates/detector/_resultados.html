@@ -4,10 +4,15 @@
   <div class="space-y-3">
   {% for app in apps %}
     <a href="{% url 'detector:detalle' app.slug %}"
-       class="flex items-center gap-4 bg-nochesoft border border-white/10 rounded-2xl p-4 hover:border-faro/40 transition-colors">
+       class="flex items-center gap-4 bg-nochesoft border border-white/10 rounded-2xl p-4 hover:border-acento/40 transition-colors">
       <span class="text-3xl">{{ app.logo_emoji|default:"📱" }}</span>
       <div class="flex-1 min-w-0">
-        <p class="font-display text-lg font-medium truncate">{{ app.nombre }}</p>
+        <div class="flex items-center gap-2">
+          <p class="font-display text-lg font-medium truncate">{{ app.nombre }}</p>
+          {% if app.fuente == "ia" %}
+          <span class="shrink-0 text-[10px] font-mono uppercase tracking-wide px-2 py-0.5 bg-acento/15 text-acento rounded-full">IA</span>
+          {% endif %}
+        </div>
         <p class="text-sm text-crema/50 truncate">{{ app.descripcion_corta }}</p>
       </div>
       <div class="text-right shrink-0">
@@ -19,12 +24,13 @@
   </div>
 {% else %}
   <div class="bg-nochesoft border border-white/10 rounded-2xl p-6 text-center">
-    <p class="text-crema/60 mb-4">"{{ query }}" no está en nuestra base curada todavía.</p>
+    <p class="text-crema/80 font-medium mb-1">Todavía no analizamos "{{ query }}"</p>
+    <p class="text-sm text-crema/50 mb-4">No está en nuestra base verificada. Podemos generar una estimación con IA.</p>
     <button
       hx-get="{% url 'detector:analizar' %}?q={{ query|urlencode }}"
       hx-target="#resultados"
       hx-swap="innerHTML"
-      class="px-5 py-2.5 bg-faro text-noche font-medium rounded-full text-sm hover:opacity-90 transition-opacity">
+      class="px-5 py-2.5 bg-acento text-noche font-medium rounded-full text-sm hover:opacity-90 transition-opacity">
       Analizar con IA
     </button>
     <p class="text-xs text-crema/30 mt-3 font-mono">Estimación automática, no verificada manualmente.</p>
