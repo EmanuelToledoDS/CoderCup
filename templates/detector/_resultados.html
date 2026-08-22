@@ -23,10 +23,25 @@
   {% endfor %}
   </div>
 {% else %}
+  {% if sugerencias %}
+  <div class="bg-nochesoft border border-acento/30 rounded-2xl p-4 mb-3">
+    <p class="text-sm text-crema/60 mb-3">¿Quisiste decir…?</p>
+    <div class="space-y-2">
+      {% for s in sugerencias %}
+      <a href="{% url 'detector:detalle' s.slug %}"
+         class="flex items-center gap-3 bg-noche border border-white/10 rounded-xl p-3 hover:border-acento/40 transition-colors">
+        <span class="text-xl">{{ s.logo_emoji|default:"📱" }}</span>
+        <span class="font-medium">{{ s.nombre }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
   <div class="bg-nochesoft border border-white/10 rounded-2xl p-6 text-center">
     <p class="text-crema/80 font-medium mb-1">Todavía no analizamos "{{ query }}"</p>
     <p class="text-sm text-crema/50 mb-4">No está en nuestra base verificada. Podemos generar una estimación con IA.</p>
     <button
+      id="btn-analizar-ia"
       hx-get="{% url 'detector:analizar' %}?q={{ query|urlencode }}"
       hx-target="#resultados"
       hx-swap="innerHTML"

@@ -48,4 +48,15 @@
   .htmx-indicator { opacity: 0; transition: opacity 150ms; }
   .htmx-request .htmx-indicator, .htmx-request.htmx-indicator { opacity: 1; }
 </style>
+<script>
+  document.body.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.name === 'q') {
+      const btn = document.getElementById('btn-analizar-ia');
+      if (btn) {
+        e.preventDefault();
+        btn.click();
+      }
+    }
+  });
+</script>
 {% endblock %}

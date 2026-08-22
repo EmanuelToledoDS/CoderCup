@@ -1,3 +1,4 @@
+import difflib
 import hashlib
 
 from django.db.models import Count, Q
@@ -25,12 +26,6 @@ MENSAJE_RIESGO = {
 
 
 def _guardar_app_analizada(nombre_app, resultado):
-    """
-    Guarda el resultado de la IA como registro curado (fuente=IA) para que
-    la próxima búsqueda del mismo nombre lo encuentre directo en la base,
-    sin volver a gastar tokens de IA. Si ya existe un slug igual (carrera
-    o app ya cargada), no pisa el registro existente.
-    """
     slug = slugify(nombre_app)[:140]
     if App.objects.filter(slug=slug).exists():
         return
@@ -99,7 +94,18 @@ def buscar(request):
     apps = App.objects.filter(
         Q(nombre__icontains=query) | Q(categoria__icontains=query), activo=True
     ).prefetch_related("factores")[:8]
-    return render(request, "detector/_resultados.html", {"query": query, "apps": apps})
+
+    sugerencias = []
+    if not apps:
+        mapa = {a.nombre.lower(): a for a in App.objects.filter(activo=True)}
+        cercanos = difflib.get_close_matches(query.lower(), list(mapa.keys()), n=3, cutoff=0.6)
+        sugerencias = [mapa[c] for c in cercanos]
+
+    return render(
+        request,
+        "detector/_resultados.html",
+        {"query": query, "apps": apps, "sugerencias": sugerencias},
+    )
 
 
 @require_GET
