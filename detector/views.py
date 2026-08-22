@@ -60,12 +60,11 @@ def buscar(request):
 
 @require_GET
 def analizar(request):
-    query = request.GET.get("q", "").strip()
+    query = request.GET.get("q", "").strip()[:60]
     if not query:
         return render(request, "detector/_analisis_ia.html", {"error": "Ingresá un nombre."})
 
     Busqueda.objects.create(termino=query, resuelta_por_ia=True, ip_hash=_hash_ip(request))
-
     try:
         resultado = analizar_app_con_ia(query)
     except AIAnalysisError as exc:
