@@ -97,7 +97,7 @@ def analizar_app_con_ia(nombre_app: str) -> dict:
             getattr(exc.response, "text", "sin respuesta"),
         )
         raise AIAnalysisError("No se pudo contactar al servicio de IA.") from exc
-    
+
     data = response.json()
     try:
         raw_text = data["choices"][0]["message"]["content"].strip()
