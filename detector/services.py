@@ -3,8 +3,8 @@ Capa de análisis por IA. Se usa SOLO cuando una app no está en la base de
 datos curada. Devuelve siempre un JSON estructurado y deja explícito que
 es una estimación (no un dato verificado), tal como se explica en la UI.
 
-Usa la API de Google Gemini (free tier, sin tarjeta de crédito).
-Conseguir API key gratis en: https://aistudio.google.com/apikey
+Usa la API de Groq (free tier, sin tarjeta de crédito).
+Conseguir API key gratis en: https://console.groq.com/keys
 """
 
 import json
@@ -15,11 +15,8 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-GEMINI_MODEL = "gemini-2.5-flash"
-GEMINI_API_URL = (
-    f"https://generativelanguage.googleapis.com/v1beta/models/"
-    f"{GEMINI_MODEL}:generateContent"
-)
+GROQ_MODEL = "openai/gpt-oss-120b"
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 SYSTEM_PROMPT = """Sos un asistente experto en seguridad digital infantil.
 Tu tarea es estimar, para una app/web/plataforma que te van a nombrar,
@@ -63,47 +60,45 @@ class AIAnalysisError(Exception):
 
 def analizar_app_con_ia(nombre_app: str) -> dict:
     """
-    Llama a la API de Gemini para estimar el riesgo de una app que no
+    Llama a la API de Groq para estimar el riesgo de una app que no
     está en la base curada. Lanza AIAnalysisError si algo falla.
     """
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
         raise AIAnalysisError(
-            "No hay GEMINI_API_KEY configurada en el entorno."
+            "No hay GROQ_API_KEY configurada en el entorno."
         )
 
     payload = {
-        "system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
-        "contents": [
+        "model": GROQ_MODEL,
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
             {
                 "role": "user",
-                "parts": [
-                    {"text": f'Analizá la siguiente app/web/plataforma: "{nombre_app}"'}
-                ],
-            }
+                "content": f'Analizá la siguiente app/web/plataforma: "{nombre_app}"',
+            },
         ],
-        "generationConfig": {
-            "temperature": 0.3,
-            "maxOutputTokens": 500,
-            "responseMimeType": "application/json",
-        },
+        "temperature": 0.3,
+        "max_tokens": 500,
+        "response_format": {"type": "json_object"},
     }
-    headers = {"content-type": "application/json", "x-goog-api-key": api_key}
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
 
     try:
-        response = requests.post(
-            GEMINI_API_URL, headers=headers, json=payload, timeout=20
-        )
+        response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=20)
         response.raise_for_status()
     except requests.RequestException as exc:
-        logger.warning("Error llamando a la API de Gemini: %s", exc)
+        logger.warning("Error llamando a la API de Groq: %s", exc)
         raise AIAnalysisError("No se pudo contactar al servicio de IA.") from exc
 
     data = response.json()
     try:
-        raw_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        raw_text = data["choices"][0]["message"]["content"].strip()
     except (KeyError, IndexError) as exc:
-        logger.warning("Respuesta de Gemini con forma inesperada: %s", data)
+        logger.warning("Respuesta de Groq con forma inesperada: %s", data)
         raise AIAnalysisError("La IA devolvió una respuesta no válida.") from exc
 
     if raw_text.startswith("```"):
