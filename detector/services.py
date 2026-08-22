@@ -28,16 +28,26 @@ in-app, algoritmos de recomendación, etc.), sin inventar datos específicos
 que no puedas justificar razonablemente.
 
 Respondé EXCLUSIVAMENTE con un JSON válido, sin texto adicional, sin
-backticks de markdown, con esta forma exacta:
+backticks de markdown, con esta forma exacta (los valores de ejemplo son
+solo para mostrar el formato, NO los repitas: calculá los valores reales
+según la app que te pidan):
 
 {
   "existe": true,
-  "edad_recomendada": 13,
-  "nivel_riesgo": "medio",
-  "factores_riesgo": ["Contacto con desconocidos", "Compras in-app"],
+  "edad_recomendada": 16,
+  "nivel_riesgo": "alto",
+  "factores_riesgo": ["Chat de voz con desconocidos", "Compras in-app"],
   "justificacion": "Explicación breve en 2-3 oraciones.",
   "confianza": "media"
 }
+
+Guía de criterio para "edad_recomendada" (pensá como clasificación ESRB/PEGI):
+- Juegos infantiles sin violencia ni chat: 4-8
+- Contenido general, sin chat abierto: 8-12
+- Redes sociales o juegos con chat/multijugador con desconocidos: 13-15
+- Violencia gráfica, apuestas simuladas, o contenido para adultos: 16-18
+Analizá CADA app de forma independiente: dos apps distintas casi nunca
+deberían dar el mismo resultado salvo que el riesgo real sea equivalente.
 
 Reglas:
 - "nivel_riesgo" debe ser uno de: "bajo", "medio", "alto", "muy_alto".
