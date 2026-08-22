@@ -87,7 +87,7 @@ def analizar_app_con_ia(nombre_app: str) -> dict:
         "Content-Type": "application/json",
     }
 
-        try:
+    try:
         response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=20)
         response.raise_for_status()
     except requests.RequestException as exc:
@@ -97,6 +97,7 @@ def analizar_app_con_ia(nombre_app: str) -> dict:
             getattr(exc.response, "text", "sin respuesta"),
         )
         raise AIAnalysisError("No se pudo contactar al servicio de IA.") from exc
+    
     data = response.json()
     try:
         raw_text = data["choices"][0]["message"]["content"].strip()
