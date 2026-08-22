@@ -88,12 +88,11 @@ def analizar_app_con_ia(nombre_app: str) -> dict:
             "responseMimeType": "application/json",
         },
     }
-    headers = {"content-type": "application/json"}
-    params = {"key": api_key}
+    headers = {"content-type": "application/json", "x-goog-api-key": api_key}
 
     try:
         response = requests.post(
-            GEMINI_API_URL, headers=headers, params=params, json=payload, timeout=20
+            GEMINI_API_URL, headers=headers, json=payload, timeout=20
         )
         response.raise_for_status()
     except requests.RequestException as exc:
