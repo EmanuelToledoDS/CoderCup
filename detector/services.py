@@ -79,7 +79,7 @@ def analizar_app_con_ia(nombre_app: str) -> dict:
             },
         ],
         "temperature": 0.3,
-        "max_tokens": 500,
+        "max_tokens": 2000,
         "response_format": {"type": "json_object"},
     }
     headers = {
