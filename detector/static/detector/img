@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <path d="M20 6 L28 9.5 L28 19 Q28 25.5 20 29 Q12 25.5 12 19 L12 9.5 Z" fill="none" stroke="#1FB081" stroke-width="2"/>
+  <circle cx="20" cy="18" r="6.5" fill="none" stroke="#1FB081" stroke-width="1.5" opacity="0.55"/>
+  <text x="20" y="23" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700" fill="#1FB081">R</text>
+</svg>
