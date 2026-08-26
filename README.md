@@ -1,4 +1,4 @@
-# Radar Digital — Análisis de riesgo digital para chicos y adolescentes
+# Radar Digital — Análisis de riesgo digital para niños, niñas y adolescentes
 
 Proyecto para CoderCup T1. Buscador que indica la edad recomendada y el
 nivel de riesgo de apps/webs, combinando una base de datos curada
